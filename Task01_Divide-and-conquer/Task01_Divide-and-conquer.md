@@ -14,7 +14,7 @@ Datawhale2群 102-StarLEE
 
 分治法通常用数学归纳法来验证，且他的复杂度多以解递归关系式来得到。
 
-<img src="https://github.com/starlee1996/LeetCode/blob/master/Task01_%E5%88%86%E6%B2%BB/pics/1_%E5%88%86%E6%B2%BB%E7%A4%BA%E6%84%8F%E5%9B%BE.png?raw=true" alt="分治示意图" style="zoom:80%;" /> 
+<img src="https://github.com/starlee1996/LeetCode/blob/master/Task01_Divide-and-conquer/pics/1_%E5%88%86%E6%B2%BB%E7%A4%BA%E6%84%8F%E5%9B%BE.png?raw=true" alt="分治示意图" style="zoom:80%;" /> 
 
 ****
 
@@ -100,7 +100,7 @@ class Solution:
         return l if nums.count(l) >= nums.count(r) else r
 ```
 
-<img src="https://github.com/starlee1996/LeetCode/blob/master/Task01_%E5%88%86%E6%B2%BB/pics/2_169%E7%BB%93%E6%9E%9C.png?raw=true" alt="169" style="zoom:80%;" />
+<img src="https://github.com/starlee1996/LeetCode/blob/master/Task01_Divide-and-conquer/pics/2_169%E7%BB%93%E6%9E%9C.png?raw=true" alt="169" style="zoom:80%;" />
 
 **No.53 最大子序和**
 
@@ -150,7 +150,7 @@ class Solution:
         return max(l, r, max_l + max_r)
 ```
 
-<img src="https://github.com/starlee1996/LeetCode/blob/master/Task01_%E5%88%86%E6%B2%BB/pics/3_53%E7%BB%93%E6%9E%9C.png?raw=true" alt="53" style="zoom:80%;" />
+<img src="https://github.com/starlee1996/LeetCode/blob/master/Task01_Divide-and-conquer/pics/3_53%E7%BB%93%E6%9E%9C.png?raw=true" alt="53" style="zoom:80%;" />
 
 **No.50 Pow(x,n)**
 
@@ -184,5 +184,5 @@ class Solution:
         return self.myPow(x*x, n/2)
 ```
 
-<img src="https://github.com/starlee1996/LeetCode/blob/master/Task01_%E5%88%86%E6%B2%BB/pics/4_50%E7%BB%93%E6%9E%9C.png?raw=true" alt="50" style="zoom:80%;" />
+<img src="https://github.com/starlee1996/LeetCode/blob/master/Task01_Divide-and-conquer/pics/4_50%E7%BB%93%E6%9E%9C.png?raw=true" alt="50" style="zoom:80%;" />
 
