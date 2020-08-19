@@ -80,7 +80,7 @@ class Solution:
         return max(dp)
 ```
 
-结果图
+<img src="https://github.com/starlee1996/LeetCode/blob/master/Task02_Dynamic%20programming/pics/1_674.png?raw=true" style="zoom:80%;" />
 
 **No.5 最长回文子串**
 
@@ -128,7 +128,7 @@ def longestPalindrome(self, s: str) -> str:
     return ans
 ```
 
-结果图
+<img src="https://github.com/starlee1996/LeetCode/blob/master/Task02_Dynamic%20programming/pics/2_5.png?raw=true" style="zoom:80%;" />
 
 **No.516 最长回文子序列**
 
@@ -167,7 +167,7 @@ class Solution:
         return dp[0][n - 1]
 ```
 
-结果图
+<img src="https://github.com/starlee1996/LeetCode/blob/master/Task02_Dynamic%20programming/pics/3_516.png?raw=true" style="zoom:80%;" />
 
 **No.72 编辑距离**
 
@@ -228,7 +228,7 @@ class Solution:
         return dp[n][m]
 ```
 
-结果图
+<img src="https://github.com/starlee1996/LeetCode/blob/master/Task02_Dynamic%20programming/pics/4_72.png?raw=true" style="zoom:80%;" />
 
 **No.198 打家劫舍**
 
@@ -280,7 +280,7 @@ class Solution:
         return dp[n][m]
 ```
 
-结果图
+<img src="https://github.com/starlee1996/LeetCode/blob/master/Task02_Dynamic%20programming/pics/5_198.png?raw=true" style="zoom:80%;" />
 
 **No.213 打家劫舍II**
 
@@ -321,4 +321,4 @@ class Solution:
         return max(main(nums[:n-1]),main(nums[1:n]))
 ```
 
-结果图
+<img src="https://github.com/starlee1996/LeetCode/blob/master/Task02_Dynamic%20programming/pics/6_213.png?raw=true" style="zoom:80%;" />
