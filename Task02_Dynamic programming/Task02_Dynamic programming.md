@@ -4,191 +4,321 @@ Datawhale2群 102-StarLEE
 
 ## 动态规划介绍
 
-动态规划（dynamic programming）
+动态规划（dynamic programming）是一种数学优化和计算机编程方法。该方法是由Richard Bellman于1950年提出，并已在众多领域（航空工程，经济学等）中得到应用。
 
+动态规划指通过以递归的方式将问题分解为更简单的子问题来简化复杂的问题，虽然无法以该方式解决某些决策问题，但跨越多个时间点的决策通常会递归分解。在CS中，如果可以通过将问题分解为子问题，然后递归地找到子问题的最优解来最佳地解决问题，则可以说它具有最优子结构。
 
-
-
-
-
-
-是一种基于多分支递归的算法。分治算法就是把一个复杂的问题分成两个或更多的相同或相似的子问题，直到最后子问题可以简单的直接求解，原问题的解即子问题的解的合并。
-
-分治是解决很多高效算法的基础，如排序算法（快速排序，并归排序），快速乘法算法（Karatsuba算法），最近点对问题，语法分析（top-down parsers）以及傅里叶变换（FFT）。
-
-理解并设计分治算法是一项较为复杂的事情，需对要解决的基本问题有很好了解。有如通过归纳证明定理，为了使得递归进行，通常需要使用一个较为概括或复杂的问题替换原始问题。并且分治往往没有系统性的方法来合适地概括问题。
-
-分治法通常用数学归纳法来验证，且他的复杂度多以解递归关系式来得到。
-
-![](https://github.com/starlee1996/LeetCode/blob/master/Task01_Divide-and-conquer/pics/1_%E5%88%86%E6%B2%BB%E7%A4%BA%E6%84%8F%E5%9B%BE.png?raw=true)
+如果子问题可以递归地嵌套在较大的问题中，从而可以应用动态规划方法，则较大问题的解与子问题的解之间存在关系，在一些关于最优化的文献中，这种关系被称为Bellman方程。
 
 ****
 
-## 分治优点
+## 动态规划编程
 
-**解决复杂问题：**分治法是解决困难问题的有力工具，它所需要的只是将问题分解为子问题，解决较为容易的子问题后，将其合并产生原问题解。
+适用于动态规划的问题需要具有两个关键属性：***最优子结构***和***重叠子问题***。如果可以通过将最优解决方案与非重叠子问题组合来解决问题，则该策略成为“分治”。这也是为什么并归排序和快速排序未归类为动态规划的原因
 
-**算法效率：**分治法的范式通常有助于发现高效算法。分治算法是Karatsuba快速乘法算法，快速排序，并归排序，用于矩阵乘法的Strassen算法以及快速傅里叶变换算法等的关键思想。
+*最优子结构*是指可以通过组合子问题的最优解来获得给定优化问题的解。通常借助递归来描述最优子结构。例如给定一个图G = (V, E)，从点u到点v的最短路径p表现出最优子结构：在这个最短路径p上取任意中间点w。如果p确实为最短路径，则可以将其分为u到w的子路径p1和w到v的子路径p2，这些子路径实际上就是对应顶点之间的最短路径。因此可以指定一种以递归方式寻找最短路径的解决方案，这就是Bellman-Ford算法。
 
-**同步性：**分治算法适用于具有多处理器的系统。尤其是共享内存系统，因为可以在不同处理器上解决不同子问题，它无需预先计划处理器之间的数据通信。
+*重叠子问题*意味着子问题的空间很小，任何解决该问题的递归算法都应该一遍又一遍地解决相同的子问题，而不是生成新的子问题。例如生成斐波那契数列的递归公式：F_i = F_i-1 + F_i-2，基本情况为F_1 = F_2 = 1。即使子问题总数很小，但如果这样递归地解决方案，我们最终还是会一遍又一遍解决相同问题。动态规划考虑到这一事实，并且只解决了每个子问题一次。
 
-**内存存取：**分治算法可有效利用内存缓存。一旦子问题足够小，原则上就可以在缓存中解决所有的子问题。
+可以通过两种方式来实现：
+
+**自上而下：**这是任何问题递归的直接结果。如果可以使用子问题的解来递归地提出任何问题的解，并且子问题重叠，则可以将子问题的解存储在表中。每当尝试解决新的子问题时，都可首先查看表以判断是否问题已被解决过。如果已记录过解，则直接使用，否则解决问题并添加到表中。
+
+**自下而上：**按照子问题递归地提出问题的解后，可以通过自下而上的方式重新构建问题：尝试先解决子问题，然后使用其解来构建并提出更大的子问题的解。通常也以表的形式通过使用较小子问题的解迭代生成越来越大的子问题的解来完成操作。例如，若我们知到了F_i-1和F_i-2的值，则可以直接得到F_i的值。
 
 ****
 
 ## 算法实现
 
-**递归：**分治法是作为递归过程实现的。当前正在解决的子问题会自动存储在过程调用的栈中。
+动态规划问题的一般形式就是求最值。动态规划是运筹学的一种最优化方法，不过在计算机问题上应用也很多
 
-**显式栈：**分治法也可以通过将部分子问题存储在某些显式数据结构（栈，队列）中的非递归程序来实现。这种方法在选择下一个子问题时提供了更大的自由度，这一功能在某些应用程序中很重要。
+求最值的核心问题是**穷举**。因为要求最值，肯定要把所有可行的答案穷举出来，然后在其中找最值。但是动态规划的穷举有点特别，因为这类问题存在重叠子问题，如果暴力穷举的话效率会极其低下，所以需要「备忘录」或者「DP table」来优化穷举过程，避免不必要的计算。而且，动态规划问题一定会具备最优子结构，才能通过子问题的最值得到原问题的最值。
 
-**栈的容量：**在分治法的递归实现中，必须确保为递归栈分配了足够的内存，否则执行可能会由于栈的溢出而失败。高效的分治法通常将具有相对较小的递归深度，例如对*n*个元素进行快速排序，则最多只需要log2(n)次调用递归过程。可以通过最小化递归过程的参数和内部变量，或使用显示栈结构来减少栈溢出的风险。
+另外，虽然动态规划的核心思想就是穷举求最值，但是问题可以千变万化，穷举所有可行解并不是一件容易的事，只有列出正确的状态转移方程才能正确地穷举，在实际的算法问题中，写出状态转移方程是较为困难的。
 
-**子问题选择：**选择子问题具有很大的自由度，当子问题小到可以直接解决时便终止递归
-
-在每一层递归上有三个步骤：
-
-1. 分：将问题分解为若干规模较小，相对独立，与原问题形式相同的子问题
-2. 治：若子问题规模小且易解决，则直接解。否则，递归地解决各子问题
-3. 合：将各子问题的解合并为原问题的解
-
-伪代码：
+可以遵循一个流程：明确 base case → 明确状态 → 明确选择 → 定义 dp 数组/函数的含义。按上面的流程走，可以套下方框架：
 
 ```python
-def divideConquer(prob, params):
-    # 终止条件
-    if prob is None:
-        return result
-    # 准备数据
-    data = prepareData(prob)
-    # 分
-    subprobs = splitProblem(prob, data)
-    # 治
-    subres[1] = divideConquer(subprobs[0],ps)
-    subres[2] = divideConquer(subprobs[1],ps)
-    subres[3] = divideConquer(subprobs[2],ps)
-    # 对子结果进行合并 得到最终结果
-    result = process_result(subres)
+# 初始化 base case
+dp[0][0]...[0] = base
+# 状态转移
+for 状态1 in 状态1所有取值:
+    ...
+    	for 状态n in 状态n所有取值:
+            dp[状态1][状态2]...[状态n] = 最值(选择1, 选择2,...)
 ```
 
 ****
 
 ## LeetCode例题
 
-**No.169 多数元素**
+**No.674 最长连续递增序列**
 
-题目：给定大小为*n*数组，找到其中众数
+题目：给定未排序整数数组，找到最长且连续的递增序列
 
 思路：
 
-+ 分：把数组不断细分为若干不相交的子数组
-+ 治：得到每个子数组的众数（显然长度为1的数组众数就是那唯一元素）
-+ 合：子数组合并得到大数组，其众数为两子数组众数中更多的那个元素
++ 动态规划状态：dp[i]为以nums[i]结尾的最长递增子序列长度
++ 状态转移方程：nums[i]前后不连续递增，长度为1；nums[i]前后连续递增，`dp[i] = dp[i-1] + 1`
++ 边界条件：初始化元素均为1的数组
++ 输出状态：返回`max(dp)`
 
 算法实现：
 
 ```python
 class Solution:
-    def majorityElement(self, nums: List[int]) -> int:
-        # 特殊情况
+    def findLengthOfLCIS(self, nums: List[int]) -> int:
         if not nums:
-            return None
-        
-        # 确定迭代终止条件
-        if len(nums) == 1:
-            return nums[0]
-        
-        # 分治：将数组左右平分并开始迭代
-        l = self.majorityElement(nums[:len(nums)//2])
-        r = self.majorityElement(nums[len(nums)//2:])
-        
-        # 合
-        return l if nums.count(l) >= nums.count(r) else r
+            return 0
+        n = len(nums)
+        dp = [1] * n
+        for i in range(1, n):
+            if nums[i] > nums[i-1]:
+                dp[i] = dp[i-1] + 1
+            else:
+                 dp[i] = 1
+        return max(dp)
 ```
 
-![](https://github.com/starlee1996/LeetCode/blob/master/Task01_Divide-and-conquer/pics/2_169%E7%BB%93%E6%9E%9C.png?raw=true)
+结果图
 
-**No.53 最大子序和**
+**No.5 最长回文子串**
 
-题目：给定整数数组`nums`，返回具有最大和连续子数组（最少一个元素）的和
+题目：给定字符串s，找到s中最长的回文子串
 
 思路：
 
-+ 分：把整数数组不断细分为若干不相交的子数组
-+ 治：得到每个子数组的和（显然长度为1的数组和就是那唯一元素）
-+ 合：子数组合并得到大数组，其最大和为两子数组和中最大数或加和
++ 动态规划状态：`dp[i][j]`为`s[i:j]`是否为回文串
++ 状态转移方程：首尾字符不等，为False；首尾字符相等，看子串
+
+`dp[i][j] =  dp[i+1][j-1] and s[i] == s[j]`
+
++ 边界条件：元素为False的list of list
+
++ 输出状态：返回回文串中最长的
+
+算法实现：
+
+```python
+def longestPalindrome(self, s: str) -> str:
+    n = len(s)
+    dp = [[False] * n for _ in range(n)]
+    ans = ""
+    # 枚举子串的长度1 ~ n
+    for l in range(n):
+	  	# 枚举子串的起始位置i，通过j=i+l得到结束位置
+        for i in range(n):
+            # 得到结束位置
+            j = i + l
+            # 结束位置超范围，跳出
+            if j >= len(s):
+                break
+            # 长度为1子串为回文串
+            if l == 0:
+                dp[i][j] = True
+            # 长度为2子串看两字符是否相等
+            elif l == 1:
+                dp[i][j] = (s[i] == s[j])
+            # 状态转移方程
+            else:
+                dp[i][j] = (dp[i+1][j-1] and s[i] == s[j])
+            # 存在更长的回文串则更新ans
+            if dp[i][j] and l + 1 > len(ans):
+                ans = s[i:j+1]
+    return ans
+```
+
+结果图
+
+**No.516 最长回文子序列**
+
+题目：给定字符串s，找到s中最长的回文子序列
+
+思路：
+
++ 动态规划状态：`dp[i][j]`为`s[i:j]`中最长回文序列长度
+
++ 状态转移方程：首尾字符不等
+
+  ​							`dp[i][j] =  max(dp[i+1][j], dp[i][j-1])`
+
+  ​							首尾字符相等
+
+  ​							`dp[i][j] =  dp[i+1][j-1] + 2`
+
++ 边界条件：`dp[i][i] = 1`
+
++ 输出状态：返回`dp[0][n-1]`
 
 算法实现：
 
 ```python
 class Solution:
-    def maxSubArray(self, nums: List[int]) -> int:
-        # 特殊情况
-        if not nums:
-            return None
-        
-        # 终止条件
-        if len(nums) == 1:
-            return nums[0]
-        
-        # 分治
-        l = self.maxSubArray(nums[:len(nums)//2])
-        r = self.maxSubArray(nums[len(nums)//2:])
-        
-        
-        # 动态规划dp
-        # 从右至左计算左子数组最大和
-        max_l = nums[len(nums)//2 - 1]
-        tmp = 0
-        
-        for i in range(len(nums)//2 - 1, -1, -1):
-            tmp += nums[i]
-            max_l = max(tmp, max_l)
-        
-        # 从左至右计算右子数组最大和
-        max_r = nums[len(nums)//2]
-        tmp = 0
-        
-        for i in range(len(nums)//2, len(nums)):
-            tmp += nums[i]
-            max_r = max(tmp, max_r)
-        
-        return max(l, r, max_l + max_r)
+    def longestPalindromeSubseq(self, s: str) -> int:
+        n = len(s)
+        dp = [[0] * n for _ in range(n)]
+        for i in range(n):
+            dp[i][i] = 1
+            for j in range(i - 1, -1, -1):
+                if s[j] == s[i]:
+                    dp[j][i] = 2 + dp[j + 1][i - 1]
+                else:
+                    dp[j][i] = max(dp[j + 1][i], dp[j][i - 1])
+        return dp[0][n - 1]
 ```
 
-<img src="https://github.com/starlee1996/LeetCode/blob/master/Task01_Divide-and-conquer/pics/3_53%E7%BB%93%E6%9E%9C.png?raw=true" alt="53" style="zoom:80%;" />
+结果图
 
-**No.50 Pow(x,n)**
+**No.72 编辑距离**
 
-题目：实现`pow(x, n)`，即x的n次幂
+题目：给定两个单词word1，word2，计算word1转换为word2所使用的最少操作数
 
 思路：
 
-+ 分：将n不断除以2
-+ 治：对于每一对x，计算`x * x`来实现`pow(x, 2)`
-+ 合：若n为偶数则将多个`pow(x, 2)`乘起来，若为奇数则最后多乘以一个x
++ 动态规划状态：`dp[i][j]`为A前i个字母与B前j个字母的编辑距离
++ 状态转移方程：
+
+AB最后字符相同：
+
+```python
+dp[i][j] = min(dp[i][j-1]+1, dp[i-1][j]+1, dp[i-1][j-1])
+		 = 1 + min(dp[i][j-1], dp[i-1][j], dp[i-1][j-1]-1)
+```
+
+字符不同：
+
+```python
+dp[i][j] = 1 + min(dp[i][j-1], dp[i-1][j], dp[i-1][j-1])
+```
+
++ 边界条件：`dp[i][0] = i`和`dp[0][j] = j`
++ 输出状态：返回`dp[n][m]`
 
 算法实现：
 
 ```python
 class Solution:
-    def myPow(self, x: float, n: int) -> float:
-        # 特殊情况
-        if n < 0:
-            x = 1 / x
-            n = -n
+    def minDistance(self, word1, word2):
+        n = len(word1)
+        m = len(word2)
         
-        # 终止条件
-        if n == 0:
-            return 1
+        # 有一个字符串为空串
+        if n * m == 0:
+            return n + m
         
-        # 对于奇数情况
-        if n % 2 == 1:
-            return x * self.myPow(x, n-1)
+        # dp数组
+        dp = [ [0] * (m + 1) for _ in range(n + 1)]
         
-        # 对于偶数情况
-        return self.myPow(x*x, n/2)
+        # 边界状态初始化
+        for i in range(n + 1):
+            dp[i][0] = i
+        for j in range(m + 1):
+            dp[0][j] = j
+        
+        # 计算dp值
+        for i in range(1, n + 1):
+            for j in range(1, m + 1):
+                left = dp[i - 1][j] + 1
+                down = dp[i][j - 1] + 1
+                left_down = dp[i - 1][j - 1] 
+                if word1[i - 1] != word2[j - 1]:
+                    left_down += 1
+                dp[i][j] = min(left, down, left_down)
+        
+        return dp[n][m]
 ```
 
-<img src="https://github.com/starlee1996/LeetCode/blob/master/Task01_Divide-and-conquer/pics/4_50%E7%BB%93%E6%9E%9C.png?raw=true" alt="50" style="zoom:80%;" />
+结果图
 
+**No.198 打家劫舍**
+
+题目：每屋有现金，最高打劫金额（不能抢相邻屋子）
+
+思路：
+
++ 动态规划状态：`dp[i]`为前i个屋子抢劫最高金额
++ 状态转移方程：
+
+```python
+dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+```
+
++ 边界条件：`dp[0] = nums[0]`和`dp[1] = max(nums[0], nums[1])`
++ 输出状态：返回`dp[n-1]`
+
+算法实现：
+
+```python
+class Solution:
+    def minDistance(self, word1, word2):
+        n = len(word1)
+        m = len(word2)
+        
+        # 有一个字符串为空串
+        if n * m == 0:
+            return n + m
+        
+        # dp数组
+        dp = [ [0] * (m + 1) for _ in range(n + 1)]
+        
+        # 边界状态初始化
+        for i in range(n + 1):
+            dp[i][0] = i
+        for j in range(m + 1):
+            dp[0][j] = j
+        
+        # 计算dp值
+        for i in range(1, n + 1):
+            for j in range(1, m + 1):
+                left = dp[i - 1][j] + 1
+                down = dp[i][j - 1] + 1
+                left_down = dp[i - 1][j - 1] 
+                if word1[i - 1] != word2[j - 1]:
+                    left_down += 1
+                dp[i][j] = min(left, down, left_down)
+        
+        return dp[n][m]
+```
+
+结果图
+
+**No.213 打家劫舍II**
+
+题目：每屋有现金，屋子围成圈，最高打劫金额（不能抢相邻屋子）
+
+思路：
+
++ 动态规划状态：`dp[i]`为前i个屋子抢劫最高金额
++ 状态转移方程：
+
+```python
+dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+```
+
++ 边界条件：`dp[0] = nums[0]`和`dp[1] = max(nums[0], nums[1])`
++ 输出状态：返回`dp[n-1]`
+
+算法实现：
+
+```python
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        def main(nums):
+            n=len(nums)
+            if n==0:return 0
+            if n==1:return nums[0]
+            pre=nums[0]
+            cur=max(nums[0],nums[1])
+            for i in range(2,n):
+                temp=cur
+                cur=max(pre+nums[i],cur)
+                pre=temp
+            return cur
+        n=len(nums)
+        if n==0:return 0
+        if n==1:return nums[0]
+        if n==2:return max(nums[0],nums[1])
+        return max(main(nums[:n-1]),main(nums[1:n]))
+```
+
+结果图
