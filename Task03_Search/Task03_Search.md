@@ -1,6 +1,6 @@
 # Task03 查找
 
-Datawhale2群 102-StarLEE
+Datawhale2群  102-StarLEE
 
 ## 一. 查找表
 
